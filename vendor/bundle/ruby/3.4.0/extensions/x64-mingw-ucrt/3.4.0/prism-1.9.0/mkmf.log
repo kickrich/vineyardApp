@@ -1,0 +1,86 @@
+find_header: checking for prism.h in d:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/prism-1.9.0/include... -------------------- yes
+
+PATH=".;c:/Ruby34-x64/lib;c:\Ruby34-x64\bin;c:\Ruby34-x64\msys64\ucrt64\bin;c:\Ruby34-x64\msys64\usr\bin;C:\Users\misha\.local\share\gem\ruby\3.4.0\bin;c:\Ruby34-x64\lib\ruby\gems\3.4.0\bin;c:\Ruby34-x64\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin;C:\Program Files\BellSoft\LibericaJDK-8-Full\bin\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Go\bin;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2025.4.0\;C:\Program Files\Cloudflare\Cloudflare WARP\;C:\Program Files\nodejs\;C:\Ruby34-x64\bin;C:\Users\misha\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\misha\AppData\Local\Programs\Python\Python313\;C:\Users\misha\AppData\Local\Programs\Python\Launcher\;C:\Users\misha\AppData\Local\Microsoft\WindowsApps;E:\Microsoft VS Code\bin;C:\Users\misha\go\bin;D:\modelsim\modelsim_ase\win32aloem;D:\quartus\qcore\questa_fse\win64;D:\quartus\qcore\questa_fe\win64;C:\Users\misha\AppData\Roaming\npm" ASAN_OPTIONS=detect_leaks=0 "gcc -o conftest.exe -Ic:/Ruby34-x64/include/ruby-3.4.0/x64-mingw-ucrt -Ic:/Ruby34-x64/include/ruby-3.4.0/ruby/backward -Ic:/Ruby34-x64/include/ruby-3.4.0 -I. -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT -D_FILE_OFFSET_BITS=64  -O3 -fstack-protector-strong conftest.c -L. -Lc:/Ruby34-x64/lib -L. -pipe -s -fstack-protector-strong -lpthread -Wl,--no-as-needed     -lx64-ucrt-ruby340  -lshell32 -lws2_32 -liphlpapi -limagehlp -lshlwapi -lbcrypt  "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <winsock2.h>
+4: #include <windows.h>
+5: int main(int argc, char **argv)
+6: {
+7:   return !!argv[argc];
+8: }
+/* end */
+
+PATH=".;c:/Ruby34-x64/lib;c:\Ruby34-x64\bin;c:\Ruby34-x64\msys64\ucrt64\bin;c:\Ruby34-x64\msys64\usr\bin;C:\Users\misha\.local\share\gem\ruby\3.4.0\bin;c:\Ruby34-x64\lib\ruby\gems\3.4.0\bin;c:\Ruby34-x64\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin;C:\Program Files\BellSoft\LibericaJDK-8-Full\bin\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Go\bin;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2025.4.0\;C:\Program Files\Cloudflare\Cloudflare WARP\;C:\Program Files\nodejs\;C:\Ruby34-x64\bin;C:\Users\misha\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\misha\AppData\Local\Programs\Python\Python313\;C:\Users\misha\AppData\Local\Programs\Python\Launcher\;C:\Users\misha\AppData\Local\Microsoft\WindowsApps;E:\Microsoft VS Code\bin;C:\Users\misha\go\bin;D:\modelsim\modelsim_ase\win32aloem;D:\quartus\qcore\questa_fse\win64;D:\quartus\qcore\questa_fe\win64;C:\Users\misha\AppData\Roaming\npm" ASAN_OPTIONS=detect_leaks=0 "gcc -Ic:/Ruby34-x64/include/ruby-3.4.0/x64-mingw-ucrt -Ic:/Ruby34-x64/include/ruby-3.4.0/ruby/backward -Ic:/Ruby34-x64/include/ruby-3.4.0 -I. -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT -D_FILE_OFFSET_BITS=64  -O3 -fstack-protector-strong   -c conftest.c"
+conftest.c:5:10: fatal error: prism.h: No such file or directory
+    5 | #include <prism.h>
+      |          ^~~~~~~~~
+compilation terminated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <winsock2.h>
+4: #include <windows.h>
+5: #include <prism.h>
+/* end */
+
+PATH=".;c:/Ruby34-x64/lib;c:\Ruby34-x64\bin;c:\Ruby34-x64\msys64\ucrt64\bin;c:\Ruby34-x64\msys64\usr\bin;C:\Users\misha\.local\share\gem\ruby\3.4.0\bin;c:\Ruby34-x64\lib\ruby\gems\3.4.0\bin;c:\Ruby34-x64\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin;C:\Program Files\BellSoft\LibericaJDK-8-Full\bin\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Go\bin;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2025.4.0\;C:\Program Files\Cloudflare\Cloudflare WARP\;C:\Program Files\nodejs\;C:\Ruby34-x64\bin;C:\Users\misha\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\misha\AppData\Local\Programs\Python\Python313\;C:\Users\misha\AppData\Local\Programs\Python\Launcher\;C:\Users\misha\AppData\Local\Microsoft\WindowsApps;E:\Microsoft VS Code\bin;C:\Users\misha\go\bin;D:\modelsim\modelsim_ase\win32aloem;D:\quartus\qcore\questa_fse\win64;D:\quartus\qcore\questa_fe\win64;C:\Users\misha\AppData\Roaming\npm" ASAN_OPTIONS=detect_leaks=0 "gcc -Ic:/Ruby34-x64/include/ruby-3.4.0/x64-mingw-ucrt -Ic:/Ruby34-x64/include/ruby-3.4.0/ruby/backward -Ic:/Ruby34-x64/include/ruby-3.4.0 -I. -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT -D_FILE_OFFSET_BITS=64  -O3 -fstack-protector-strong  -Id:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/prism-1.9.0/include -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <winsock2.h>
+4: #include <windows.h>
+5: #include <prism.h>
+/* end */
+
+--------------------
+
+find_header: checking for prism/extension.h in d:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/prism-1.9.0/ext... -------------------- yes
+
+PATH=".;c:/Ruby34-x64/lib;c:\Ruby34-x64\bin;c:\Ruby34-x64\msys64\ucrt64\bin;c:\Ruby34-x64\msys64\usr\bin;C:\Users\misha\.local\share\gem\ruby\3.4.0\bin;c:\Ruby34-x64\lib\ruby\gems\3.4.0\bin;c:\Ruby34-x64\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin;C:\Program Files\BellSoft\LibericaJDK-8-Full\bin\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Go\bin;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2025.4.0\;C:\Program Files\Cloudflare\Cloudflare WARP\;C:\Program Files\nodejs\;C:\Ruby34-x64\bin;C:\Users\misha\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\misha\AppData\Local\Programs\Python\Python313\;C:\Users\misha\AppData\Local\Programs\Python\Launcher\;C:\Users\misha\AppData\Local\Microsoft\WindowsApps;E:\Microsoft VS Code\bin;C:\Users\misha\go\bin;D:\modelsim\modelsim_ase\win32aloem;D:\quartus\qcore\questa_fse\win64;D:\quartus\qcore\questa_fe\win64;C:\Users\misha\AppData\Roaming\npm" ASAN_OPTIONS=detect_leaks=0 "gcc -Ic:/Ruby34-x64/include/ruby-3.4.0/x64-mingw-ucrt -Ic:/Ruby34-x64/include/ruby-3.4.0/ruby/backward -Ic:/Ruby34-x64/include/ruby-3.4.0 -I. -Id:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/prism-1.9.0/include -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT -D_FILE_OFFSET_BITS=64  -O3 -fstack-protector-strong   -c conftest.c"
+conftest.c:5:10: fatal error: prism/extension.h: No such file or directory
+    5 | #include <prism/extension.h>
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <winsock2.h>
+4: #include <windows.h>
+5: #include <prism/extension.h>
+/* end */
+
+PATH=".;c:/Ruby34-x64/lib;c:\Ruby34-x64\bin;c:\Ruby34-x64\msys64\ucrt64\bin;c:\Ruby34-x64\msys64\usr\bin;C:\Users\misha\.local\share\gem\ruby\3.4.0\bin;c:\Ruby34-x64\lib\ruby\gems\3.4.0\bin;c:\Ruby34-x64\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin;C:\Program Files\BellSoft\LibericaJDK-8-Full\bin\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Go\bin;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2025.4.0\;C:\Program Files\Cloudflare\Cloudflare WARP\;C:\Program Files\nodejs\;C:\Ruby34-x64\bin;C:\Users\misha\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\misha\AppData\Local\Programs\Python\Python313\;C:\Users\misha\AppData\Local\Programs\Python\Launcher\;C:\Users\misha\AppData\Local\Microsoft\WindowsApps;E:\Microsoft VS Code\bin;C:\Users\misha\go\bin;D:\modelsim\modelsim_ase\win32aloem;D:\quartus\qcore\questa_fse\win64;D:\quartus\qcore\questa_fe\win64;C:\Users\misha\AppData\Roaming\npm" ASAN_OPTIONS=detect_leaks=0 "gcc -Ic:/Ruby34-x64/include/ruby-3.4.0/x64-mingw-ucrt -Ic:/Ruby34-x64/include/ruby-3.4.0/ruby/backward -Ic:/Ruby34-x64/include/ruby-3.4.0 -I. -Id:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/prism-1.9.0/include -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT -D_FILE_OFFSET_BITS=64  -O3 -fstack-protector-strong  -Id:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/prism-1.9.0/ext -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <winsock2.h>
+4: #include <windows.h>
+5: #include <prism/extension.h>
+/* end */
+
+--------------------
+
+append_cflags: checking for whether -fvisibility=hidden is accepted as CFLAGS... -------------------- yes
+
+PATH=".;c:/Ruby34-x64/lib;c:\Ruby34-x64\bin;c:\Ruby34-x64\msys64\ucrt64\bin;c:\Ruby34-x64\msys64\usr\bin;C:\Users\misha\.local\share\gem\ruby\3.4.0\bin;c:\Ruby34-x64\lib\ruby\gems\3.4.0\bin;c:\Ruby34-x64\bin;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.1\bin;C:\Program Files\BellSoft\LibericaJDK-8-Full\bin\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Go\bin;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2025.4.0\;C:\Program Files\Cloudflare\Cloudflare WARP\;C:\Program Files\nodejs\;C:\Ruby34-x64\bin;C:\Users\misha\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\misha\AppData\Local\Programs\Python\Python313\;C:\Users\misha\AppData\Local\Programs\Python\Launcher\;C:\Users\misha\AppData\Local\Microsoft\WindowsApps;E:\Microsoft VS Code\bin;C:\Users\misha\go\bin;D:\modelsim\modelsim_ase\win32aloem;D:\quartus\qcore\questa_fse\win64;D:\quartus\qcore\questa_fe\win64;C:\Users\misha\AppData\Roaming\npm" ASAN_OPTIONS=detect_leaks=0 "gcc -Ic:/Ruby34-x64/include/ruby-3.4.0/x64-mingw-ucrt -Ic:/Ruby34-x64/include/ruby-3.4.0/ruby/backward -Ic:/Ruby34-x64/include/ruby-3.4.0 -I. -Id:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/prism-1.9.0/include -Id:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/prism-1.9.0/ext -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT -D_FILE_OFFSET_BITS=64  -O3 -fstack-protector-strong  -fvisibility=hidden -Werror -c conftest.c"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <winsock2.h>
+4: #include <windows.h>
+5: int main(int argc, char **argv)
+6: {
+7:   return !!argv[argc];
+8: }
+/* end */
+
+--------------------
+

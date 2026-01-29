@@ -1,0 +1,20 @@
+current directory: d:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/erb-6.0.1/ext/erb/escape
+c:/Ruby34-x64/bin/ruby.exe extconf.rb
+checking for rb_ext_ractor_safe() in ruby.h... yes
+creating Makefile
+
+current directory: d:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/erb-6.0.1/ext/erb/escape
+make -j5 DESTDIR\= sitearchdir\=./.gem.20260129-15720-2rxitq sitelibdir\=./.gem.20260129-15720-2rxitq clean
+
+current directory: d:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/erb-6.0.1/ext/erb/escape
+make -j5 DESTDIR\= sitearchdir\=./.gem.20260129-15720-2rxitq sitelibdir\=./.gem.20260129-15720-2rxitq
+generating escape-x64-mingw-ucrt.def
+compiling escape.c
+linking shared-object erb/escape.so
+
+current directory: d:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/erb-6.0.1/ext/erb/escape
+make -j5 DESTDIR\= sitearchdir\=./.gem.20260129-15720-2rxitq sitelibdir\=./.gem.20260129-15720-2rxitq install
+/usr/bin/install -c -m 0755 escape.so ./.gem.20260129-15720-2rxitq/erb
+
+current directory: d:/misha/VKR/Diplom/Project/vineyardMonitoringSystem/vineyardApp/vendor/bundle/ruby/3.4.0/gems/erb-6.0.1/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20260129-15720-2rxitq sitelibdir\=./.gem.20260129-15720-2rxitq clean
