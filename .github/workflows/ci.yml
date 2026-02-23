@@ -18,8 +18,10 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Make bin files executable
-        run: chmod +x bin/*
+      - name: Fix shebang and permissions
+        run: |
+          sed -i 's/ruby\.exe/ruby/g' bin/*
+          chmod +x bin/*
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
@@ -39,8 +41,10 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Make bin files executable
-        run: chmod +x bin/*
+      - name: Fix shebang and permissions
+        run: |
+          sed -i 's/ruby\.exe/ruby/g' bin/*
+          chmod +x bin/*
 
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
@@ -59,7 +63,7 @@ jobs:
           bundler-cache: true
 
       - name: Prepare RuboCop cache
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         env:
           DEPENDENCIES_HASH: ${{ hashFiles('.ruby-version', '**/.rubocop.yml', '**/.rubocop_todo.yml', 'Gemfile.lock') }}
         with:
@@ -68,8 +72,10 @@ jobs:
           restore-keys: |
             rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-
 
-      - name: Make bin files executable
-        run: chmod +x bin/*
+      - name: Fix shebang and permissions
+        run: |
+          sed -i 's/ruby\.exe/ruby/g' bin/*
+          chmod +x bin/*
 
       - name: Lint code for consistent style
         run: bin/rubocop -f github
