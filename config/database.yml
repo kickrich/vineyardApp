@@ -1,7 +1,7 @@
 development:
   adapter: postgresql
   encoding: unicode
-  database: vineyard_db
+  database: vineyard_app
   username: vineyard_user
   password: 1029
   host: localhost

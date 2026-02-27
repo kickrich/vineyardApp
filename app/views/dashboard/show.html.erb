@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vineyard Monitor - Детали видео</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  <style>
+    .vineyard-schema svg {
+      background-color: #f9fafb;
+      border-radius: 0.5rem;
+    }
+    .vineyard-schema circle {
+      transition: r 0.2s ease;
+      cursor: pointer;
+    }
+    .vineyard-schema circle:hover {
+      r: 10;
+      filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07));
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Навигация -->
+    <div class="mb-6">
+      <%= link_to "← Назад к списку", root_path, class: "text-blue-600 hover:text-blue-800" %>
+    </div>
+
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Детали видео #<%= @video.id %></h1>
+    <p class="text-gray-600 mb-8"><%= @video.original_filename %></p>
+
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <p class="text-sm text-gray-600 mb-1">Статус</p>
+          <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
+            <%= status_color(@video.status) %>">
+            <%= @video.status %>
+          </span>
+        </div>
+        
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <p class="text-sm text-gray-600 mb-1">Загружено</p>
+          <p class="text-lg font-semibold"><%= @video.created_at.strftime("%d.%m.%Y %H:%M") %></p>
+        </div>
+        
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <p class="text-sm text-gray-600 mb-1">Размер</p>
+          <p class="text-lg font-semibold"><%= number_to_human_size(@video.video_file.byte_size) %></p>
+        </div>
+        
+        <div class="text-center p-4 bg-gray-50 rounded-lg">
+          <p class="text-sm text-gray-600 mb-1">ID видео</p>
+          <p class="text-lg font-semibold">#<%= @video.id %></p>
+        </div>
+      </div>
+    </div>
+
+    <% if @video.detection.present? %>
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-700 mb-6">Результаты анализа</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-green-50 rounded-lg p-6 text-center">
+            <p class="text-sm text-green-600 mb-2">Кустов обнаружено</p>
+            <p class="text-4xl font-bold text-green-700"><%= @video.detection.bushes_count %></p>
+          </div>
+          
+          <div class="bg-red-50 rounded-lg p-6 text-center">
+            <p class="text-sm text-red-600 mb-2">Пробелов обнаружено</p>
+            <p class="text-4xl font-bold text-red-700"><%= @video.detection.gaps_count %></p>
+          </div>
+          
+          <div class="bg-blue-50 rounded-lg p-6 text-center">
+            <p class="text-sm text-blue-600 mb-2">Рядов определено</p>
+            <p class="text-4xl font-bold text-blue-700">
+              <% if @video.detection.result_json["tracking_stats"] && @video.detection.result_json["tracking_stats"]["unique_bushes"] %>
+                <%= (@video.detection.result_json["tracking_stats"]["unique_bushes"] / 10).to_i %>
+              <% else %>
+                -
+              <% end %>
+            </p>
+          </div>
+          
+          <div class="bg-purple-50 rounded-lg p-6 text-center">
+            <p class="text-sm text-purple-600 mb-2">Ср. расстояние между кустами</p>
+            <p class="text-4xl font-bold text-purple-700">
+              <%= number_with_precision(@video.detection.bush_spacing_avg, precision: 2) %>
+              <span class="text-sm">px</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-200 pt-6">
+          <h3 class="text-lg font-medium text-gray-700 mb-4">Детальная информация</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-medium text-gray-600 mb-3">Информация о видео</h4>
+              <dl class="space-y-2">
+                <% if @video.detection.result_json["video_info"] %>
+                  <div class="flex justify-between">
+                    <dt class="text-gray-500">Всего кадров:</dt>
+                    <dd class="font-medium"><%= @video.detection.result_json["video_info"]["total_frames"] %></dd>
+                  </div>
+                  <div class="flex justify-between">
+                    <dt class="text-gray-500">Обработано кадров:</dt>
+                    <dd class="font-medium"><%= @video.detection.result_json["video_info"]["processed_frames"] %></dd>
+                  </div>
+                  <div class="flex justify-between">
+                    <dt class="text-gray-500">FPS:</dt>
+                    <dd class="font-medium"><%= @video.detection.result_json["video_info"]["fps"] %></dd>
+                  </div>
+                  <div class="flex justify-between">
+                    <dt class="text-gray-500">Длительность:</dt>
+                    <dd class="font-medium"><%= (@video.detection.result_json["video_info"]["duration"] / 60).to_i %> мин <%= (@video.detection.result_json["video_info"]["duration"] % 60).to_i %> сек</dd>
+                  </div>
+                <% end %>
+              </dl>
+            </div>
+            
+            <div>
+              <h4 class="font-medium text-gray-600 mb-3">Статистика трекинга</h4>
+              <dl class="space-y-2">
+                <% if @video.detection.result_json["tracking_stats"] %>
+                  <div class="flex justify-between">
+                    <dt class="text-gray-500">Уникальных кустов:</dt>
+                    <dd class="font-medium"><%= @video.detection.result_json["tracking_stats"]["unique_bushes"] %></dd>
+                  </div>
+                  <div class="flex justify-between">
+                    <dt class="text-gray-500">Уникальных пробелов:</dt>
+                    <dd class="font-medium"><%= @video.detection.result_json["tracking_stats"]["unique_gaps"] %></dd>
+                  </div>
+                  <div class="flex justify-between">
+                    <dt class="text-gray-500">Всего треков:</dt>
+                    <dd class="font-medium"><%= @video.detection.result_json["tracking_stats"]["total_tracks"] %></dd>
+                  </div>
+                <% end %>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Схема участка</h2>
+        
+        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <div class="vineyard-schema" style="height: 400px; position: relative;">
+            <svg width="100%" height="100%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+              
+              <% if @video.detection.result_json["bushes_positions"].present? || @video.detection.result_json["gaps_positions"].present? %>
+                <% 
+                  # Получаем все позиции
+                  all_bushes = @video.detection.result_json["bushes_positions"] || []
+                  all_gaps = @video.detection.result_json["gaps_positions"] || []
+                  all_positions = all_bushes + all_gaps
+                  
+                  if all_positions.any?
+                    # Находим минимальные и максимальные координаты для масштабирования
+                    all_x = all_positions.map { |p| p['x'] }
+                    all_y = all_positions.map { |p| p['y'] }
+                    
+                    min_x = all_x.min
+                    max_x = all_x.max
+                    min_y = all_y.min
+                    max_y = all_y.max
+                    
+                    # Добавляем отступы 10% с каждой стороны
+                    padding_x = (max_x - min_x) * 0.1
+                    padding_y = (max_y - min_y) * 0.1
+                    
+                    min_x = min_x - padding_x
+                    max_x = max_x + padding_x
+                    min_y = min_y - padding_y
+                    max_y = max_y + padding_y
+                    
+                    range_x = max_x - min_x
+                    range_y = max_y - min_y
+                    
+                    # Функции масштабирования
+                    def scale_x(x, min_x, range_x)
+                      return 50 + ((x - min_x) / range_x) * 700
+                    end
+                    
+                    def scale_y(y, min_y, range_y)
+                      return 350 - ((y - min_y) / range_y) * 300  # Инвертируем Y для SVG
+                    end
+                %>
+                
+                <% 
+                  rows = all_bushes.group_by { |p| (p['y'] / 20).round }
+                  rows.each do |row_y, bushes|
+                    if bushes.size > 1
+                      sorted_bushes = bushes.sort_by { |b| b['x'] }
+                      first_x = scale_x(sorted_bushes.first['x'], min_x, range_x)
+                      last_x = scale_x(sorted_bushes.last['x'], min_x, range_x)
+                      row_y_scaled = scale_y(sorted_bushes.first['y'], min_y, range_y)
+                %>
+                      <line x1="<%= first_x %>" y1="<%= row_y_scaled %>" 
+                            x2="<%= last_x %>" y2="<%= row_y_scaled %>" 
+                            stroke="#ccc" stroke-width="1" stroke-dasharray="5,5"/>
+                <% 
+                    end
+                  end 
+                %>
+                
+                <% all_bushes.each do |bush| %>
+                  <% 
+                    x = scale_x(bush['x'], min_x, range_x)
+                    y = scale_y(bush['y'], min_y, range_y)
+                    confidence = bush['confidence'] || 0.5
+                    opacity = 0.6 + (confidence * 0.4)
+                  %>
+                  <circle cx="<%= x %>" cy="<%= y %>" r="6" fill="#10b981" 
+                          stroke="#059669" stroke-width="2" fill-opacity="<%= opacity %>">
+                    <title>
+                      Куст #<%= bush['track_id'] %>
+                      Позиция: (x: <%= bush['x'].round(2) %>, y: <%= bush['y'].round(2) %>)
+                      Уверенность: <%= (confidence * 100).round %>% 
+                    </title>
+                  </circle>
+                <% end %>
+                
+                <% all_gaps.each do |gap| %>
+                  <% 
+                    x = scale_x(gap['x'], min_x, range_x)
+                    y = scale_y(gap['y'], min_y, range_y)
+                  %>
+                  <circle cx="<%= x %>" cy="<%= y %>" r="6" fill="#ef4444" 
+                          stroke="#dc2626" stroke-width="2" fill-opacity="0.7">
+                    <title>
+                      Пробел #<%= gap['track_id'] %>
+                      Позиция: (x: <%= gap['x'].round(2) %>, y: <%= gap['y'].round(2) %>)
+                    </title>
+                  </circle>
+                <% end %>
+                
+              <% else %>
+                <text x="250" y="200" fill="#666" font-size="14">
+                  Нет данных о позициях кустов
+                </text>
+              <% end %>
+            <% else %>
+              <text x="250" y="200" fill="#666" font-size="14">
+                Недостаточно данных для построения схемы
+              </text>
+            <% end %>
+              
+              <rect x="600" y="20" width="20" height="20" fill="#10b981" />
+              <text x="630" y="35" fill="#374151" font-size="12">Куст</text>
+              
+              <rect x="600" y="50" width="20" height="20" fill="#ef4444" fill-opacity="0.7" />
+              <text x="630" y="65" fill="#374151" font-size="12">Пробел</text>
+              
+              <text x="600" y="95" fill="#374151" font-size="10">
+                Всего кустов: <%= @video.detection.bushes_count %>
+              </text>
+              <text x="600" y="115" fill="#374151" font-size="10">
+                Пробелов: <%= @video.detection.gaps_count %>
+              </text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+    <% elsif @video.status == 'processing' %>
+      
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8" id="job-progress">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Прогресс обработки</h2>
+        
+        <div class="mb-4">
+          <div class="flex justify-between mb-2">
+            <span class="text-sm font-medium text-gray-700" id="job-step">
+              Подготовка...
+            </span>
+            <span class="text-sm font-medium text-gray-700" id="job-percent">
+              0%
+            </span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-4">
+            <div class="bg-blue-600 h-4 rounded-full progress-bar transition-all duration-500" 
+                 style="width: 0%" 
+                 id="job-progress-bar">
+            </div>
+          </div>
+          <p class="text-sm text-gray-500 mt-2" id="job-message"></p>
+          <p class="text-xs text-gray-400 mt-1" id="job-time"></p>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mt-4 text-sm text-gray-600">
+          <div>
+            <span class="font-medium">Статус:</span>
+            <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+              В обработке
+            </span>
+          </div>
+          <div>
+            <span class="font-medium">ID задачи:</span>
+            <span class="ml-2 font-mono text-xs"><%= @video.job_id %></span>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        let startTime = Date.now();
+        let updateInterval;
+        
+        function formatTime(seconds) {
+          if (seconds < 60) return Math.round(seconds) + ' сек';
+          const mins = Math.floor(seconds / 60);
+          const secs = Math.round(seconds % 60);
+          return mins + ' мин ' + secs + ' сек';
+        }
+        
+        function updateJobStatus() {
+          fetch('/api/videos/<%= @video.id %>/job_status')
+            .then(response => response.json())
+            .then(data => {
+              const elapsedSeconds = (Date.now() - startTime) / 1000;
+              
+              document.getElementById('job-step').textContent = data.step || 'Обработка...';
+              document.getElementById('job-percent').textContent = data.progress + '%';
+              document.getElementById('job-progress-bar').style.width = data.progress + '%';
+              document.getElementById('job-message').textContent = data.message || 'Идет обработка...';
+              document.getElementById('job-time').textContent = 'Прошло: ' + formatTime(elapsedSeconds);
+              
+              const progressBar = document.getElementById('job-progress-bar');
+              if (data.progress < 30) {
+                progressBar.className = 'bg-blue-600 h-4 rounded-full progress-bar transition-all duration-500';
+              } else if (data.progress < 70) {
+                progressBar.className = 'bg-yellow-500 h-4 rounded-full progress-bar transition-all duration-500';
+              } else {
+                progressBar.className = 'bg-green-500 h-4 rounded-full progress-bar transition-all duration-500';
+              }
+              
+              if (data.status === 'completed') {
+                document.getElementById('job-step').textContent = 'Завершено';
+                document.getElementById('job-percent').textContent = '100%';
+                document.getElementById('job-progress-bar').style.width = '100%';
+                document.getElementById('job-progress-bar').className = 'bg-green-600 h-4 rounded-full progress-bar transition-all duration-500';
+                document.getElementById('job-message').textContent = 'Обработка завершена, загружаем результаты...';
+                
+                clearInterval(updateInterval);
+                setTimeout(() => window.location.reload(), 2000);
+                
+              } else if (data.status === 'failed') {
+                document.getElementById('job-step').textContent = 'Ошибка';
+                document.getElementById('job-progress-bar').className = 'bg-red-600 h-4 rounded-full progress-bar transition-all duration-500';
+                document.getElementById('job-message').textContent = data.message || 'Произошла ошибка при обработке';
+                
+                clearInterval(updateInterval);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              document.getElementById('job-message').textContent = 'Ошибка получения статуса';
+            });
+        }
+
+        if (document.getElementById('job-progress')) {
+          updateJobStatus();
+          updateInterval = setInterval(updateJobStatus, 2000);
+        }
+      </script>
+
+    <% elsif @video.status == 'error' %>
+      <div class="bg-red-50 rounded-lg p-8 text-center">
+        <div class="text-red-600 text-5xl mb-4">❌</div>
+        <p class="text-red-600 font-medium text-lg">Ошибка обработки видео</p>
+        <p class="text-sm text-red-500 mt-2">Попробуйте загрузить другое видео</p>
+        <%= link_to "Загрузить новое видео", root_path, class: "mt-4 inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+</body>
+</html>

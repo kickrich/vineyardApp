@@ -60,3 +60,9 @@ group :development do
 end
 
 gem 'streamio-ffmpeg'
+gem 'faraday'
+gem 'dotenv-rails'
+gem "cssbundling-rails"
+gem "tailwindcss-rails", "~> 4.4"
+gem 'faraday-multipart'
+gem 'activejob-status'

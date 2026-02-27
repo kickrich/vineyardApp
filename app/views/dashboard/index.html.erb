@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vineyard Monitor - Загрузка видео</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+</head>
+
+<body class="bg-gray-100">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Vineyard Monitoring System</h1>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Загрузить видео для анализа</h2>
+      
+      <div class="upload-area" id="uploadArea">
+        <%= form_with url: api_videos_path, id: 'videoUploadForm', html: { multipart: true } do %>
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors cursor-pointer"
+               id="dropZone">
+            <div class="upload-prompt">
+              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H8a4 4 0 01-4-4v-8m32 0l-6-6m-6 6l6-6m0 0v-8a4 4 0 00-4-4h-8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <p class="mt-2 text-sm text-gray-600">Перетащите видео сюда или</p>
+              <p class="mt-1 text-sm text-gray-600">
+                <label for="videoFile" class="text-blue-600 hover:text-blue-800 cursor-pointer font-medium">
+                  выберите файл
+                </label>
+              </p>
+              <input type="file" id="videoFile" name="video" accept="video/mp4,video/quicktime,video/x-msvideo,video/x-matroska" class="hidden">
+            </div>
+            <div class="upload-preview hidden">
+              <p class="text-sm font-medium text-gray-700 mb-2" id="fileName"></p>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                <div class="bg-blue-600 h-2.5 rounded-full upload-progress" style="width: 0%"></div>
+              </div>
+              <p class="text-xs text-gray-500" id="uploadStatus"></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Недавние видео</h2>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Файл</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Загружено</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Кусты</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Пробелы</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200" id="videosList">
+            <% @videos.each do |video| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= video.id %></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= video.original_filename %></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                    <%= status_color(video.status) %>">
+                    <%= video.status %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= time_ago_in_words(video.created_at) %> назад
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= video.detection&.bushes_count || '-' %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= video.detection&.gaps_count || '-' %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <%= link_to "Подробнее", video_path(video), class: "text-blue-600 hover:text-blue-900" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('videoFile');
+      const uploadPrompt = document.querySelector('.upload-prompt');
+      const uploadPreview = document.querySelector('.upload-preview');
+      const fileName = document.getElementById('fileName');
+      const uploadProgress = document.querySelector('.upload-progress');
+      const uploadStatus = document.getElementById('uploadStatus');
+      const form = document.getElementById('videoUploadForm');
+
+      dropZone.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', handleFileSelect);
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-blue-500', 'bg-blue-50');
+      });
+
+      dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+        
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          fileInput.files = e.dataTransfer.files;
+          handleFileSelect({ target: { files: [file] } });
+        }
+      });
+
+      function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const allowedTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska'];
+        if (!allowedTypes.includes(file.type)) {
+          alert('Неподдерживаемый формат видео. Используйте MP4, MOV, AVI или MKV');
+          return;
+        }
+
+        fileName.textContent = file.name;
+        uploadPrompt.classList.add('hidden');
+        uploadPreview.classList.remove('hidden');
+        uploadStatus.textContent = 'Загрузка...';
+        uploadStatus.classList.remove('text-red-600', 'text-green-600');
+
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(data => {
+              throw new Error(data.error || 'Ошибка загрузки');
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          uploadStatus.textContent = 'Видео загружено, начинаем обработку...';
+          trackVideoStatus(data.id);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          uploadStatus.textContent = error.message || 'Ошибка загрузки';
+          uploadStatus.classList.add('text-red-600');
+          
+          setTimeout(() => {
+            uploadPrompt.classList.remove('hidden');
+            uploadPreview.classList.add('hidden');
+            uploadProgress.style.width = '0%';
+            fileInput.value = '';
+          }, 3000);
+        });
+      }
+
+      function trackVideoStatus(videoId) {
+        const checkStatus = () => {
+          fetch(`/api/videos/${videoId}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Ошибка получения статуса');
+              }
+              return response.json();
+            })
+            .then(data => {
+              uploadStatus.textContent = `Статус: ${data.status}`;
+              
+              if (data.status === 'processing') {
+                uploadProgress.style.width = '50%';
+                setTimeout(checkStatus, 2000);
+              } else if (data.status === 'done') {
+                uploadProgress.style.width = '100%';
+                uploadStatus.textContent = 'Обработка завершена!';
+                uploadStatus.classList.add('text-green-600');
+                
+                setTimeout(() => window.location.reload(), 1500);
+              } else if (data.status === 'error') {
+                uploadStatus.textContent = 'Ошибка обработки';
+                uploadStatus.classList.add('text-red-600');
+              } else if (data.status === 'unprocessable_entity') {
+                uploadStatus.textContent = 'Видео не прошло валидацию';
+                uploadStatus.classList.add('text-red-600');
+              }
+            })
+            .catch(error => {
+              console.error('Error tracking status:', error);
+              uploadStatus.textContent = 'Ошибка при отслеживании статуса';
+              uploadStatus.classList.add('text-red-600');
+            });
+        };
+        
+        checkStatus();
+      }
+    });
+  </script>
+</body>
+</html>
