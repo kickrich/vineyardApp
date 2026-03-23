@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_25_221146) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_20_195158) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -54,10 +54,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_25_221146) do
     t.index ["video_id"], name: "index_detections_on_video_id"
   end
 
-  create_table "videos", force: :cascade do |t|
+  create_table "video_shards", force: :cascade do |t|
+    t.float "bush_spacing_avg"
+    t.integer "bushes_count"
     t.datetime "created_at", null: false
+    t.integer "gaps_count"
     t.string "job_id"
     t.string "original_filename"
+    t.datetime "recorded_at"
+    t.jsonb "result_json", default: {}
+    t.float "row_spacing"
+    t.integer "shard_index", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "video_id", null: false
+    t.index ["video_id", "shard_index"], name: "index_video_shards_on_video_id_and_shard_index", unique: true
+    t.index ["video_id"], name: "index_video_shards_on_video_id"
+  end
+
+  create_table "videos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
     t.datetime "recorded_at"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
@@ -66,4 +83,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_25_221146) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "detections", "videos"
+  add_foreign_key "video_shards", "videos"
 end

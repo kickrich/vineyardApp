@@ -1,113 +1,62 @@
 class Video < ApplicationRecord
-  has_one :detection
+  has_many :video_shards, dependent: :destroy
   has_one_attached :video_file
-
-  validate :video_file_readability, if: :file_persisted?
-  validate :video_file_size, if: :file_persisted?
-  validate :video_file_format, if: :file_persisted?
-  validate :video_duration, if: :file_persisted?
-  validate :video_resolution, if: :file_persisted?
-  validate :video_frame_rate, if: :file_persisted?
+  has_one :detection, dependent: :destroy
 
   enum :status, {
-    uploaded: 0,
+    uploading: 0,
     processing: 1,
-    done: 2,
-    unprocessable_entity: 3,
-    error: 4
+    completed: 2,
+    error: 3
   }
 
-  private
-  
-  def file_persisted?
-    video_file.attached? && video_file.blob.persisted?
+  def total_bushes_count
+    video_shards.sum(:bushes_count)
   end
 
-  def video_file_readability
-    movie = load_movie
-    errors.add(:video_file, "не удалось прочитать видео") unless movie&.valid?
+  def total_gaps_count
+    video_shards.sum(:gaps_count)
   end
-  
-  def video_file_size
-    if video_file.byte_size < 1.megabyte
-      errors.add(:video_file, "слишком маленький файл (минимум 1 МБ)")
-    elsif video_file.byte_size > 2.gigabytes
-      errors.add(:video_file, "слишком большой файл (максимум 2 ГБ)")
+
+  def avg_bush_spacing
+    spacings = video_shards.where.not(bush_spacing_avg: nil).pluck(:bush_spacing_avg)
+    spacings.any? ? spacings.sum / spacings.size : 0.0
+  end
+
+  def all_bushes_positions
+    video_shards.flat_map { |s| s.result_json&.dig('bushes_positions') }.compact
+  end
+
+  def all_gaps_positions
+    video_shards.flat_map { |s| s.result_json&.dig('gaps_positions') }.compact
+  end
+
+  def processing_progress
+    total = video_shards.count
+    completed = video_shards.where(status: :completed).count
+    total.zero? ? 0 : (completed.to_f / total * 100).round
+  end
+
+  def recalculate_status!
+    if video_shards.exists?(status: :error)
+      new_status = :error
+    elsif video_shards.exists?(status: [:pending, :processing])
+      new_status = :processing
+    elsif video_shards.exists? && video_shards.where.not(status: :completed).empty?
+      new_status = :completed
+    else
+      new_status = :uploading
     end
+
+    update!(status: new_status) if status != new_status.to_s
   end
-  
-  def video_file_format
-    allowed_types = [
-      "video/mp4",
-      "video/quicktime",
-      "video/x-msvideo",
-      "video/x-matroska"
-    ]
+
+  def next_available_shard_index
+    existing_indices = video_shards.pluck(:shard_index).sort
+    return 1 if existing_indices.empty?
     
-    unless allowed_types.include?(video_file.content_type)
-      errors.add(:video_file, "#{video_file.filename} не является допустимым видеоформатом (MP4, MOV, AVI, MKV)")
-    end
-  end
-  
-  def video_duration
-    movie = load_movie
-    return unless movie&.valid?
-    
-    if movie.duration < 5
-      errors.add(:video_file, "слишком короткое видео (минимум 5 секунд)")
-    elsif movie.duration > 600
-      errors.add(:video_file, "слишком длинное видео (максимум 10 минут)")
-    end
-  end
-  
-  def video_resolution
-    movie = load_movie
-    return unless movie&.valid?
-    
-    if movie.width < 1280 || movie.height < 720
-      errors.add(:video_file, "слишком низкое разрешение (минимум 1280x720)")
-    end
-  end
-  
-  def video_frame_rate
-    movie = load_movie
-    return unless movie&.valid?
-    
-    if movie.frame_rate < 24
-      errors.add(:video_file, "слишком низкая частота кадров (минимум 24 fps)")
-    end
-  end
-  
-  def load_movie
-    return @movie if defined?(@movie)
-    
-    begin
-      unless video_file.attached?
-        errors.add(:video_file, "файл не прикреплен")
-        return nil
-      end
-      
-      blob = video_file.blob
-      
-      temp_file = Tempfile.new(['video'.force_encoding('UTF-8'), File.extname(blob.filename.to_s)])
-      temp_file.binmode
-      
-      blob.open do |file|
-        IO.copy_stream(file, temp_file)
-      end
-      
-      temp_file.rewind
-      @movie = FFMPEG::Movie.new(temp_file.path)
-      @movie
-    rescue => e
-      Rails.logger.error "Ошибка загрузки видео: #{e.message}"
-      errors.add(:video_file, "не удалось загрузить видео")
-      nil
-    ensure
-      if defined?(temp_file) && temp_file
-        temp_file.close
-        temp_file.unlink
-      end
+    (1..existing_indices.last + 1).each do |i|
+      return i unless existing_indices.include?(i)
     end
   end
 end
