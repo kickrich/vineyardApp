@@ -59,4 +59,29 @@ class Video < ApplicationRecord
       return i unless existing_indices.include?(i)
     end
   end
+
+  def aggregated_results
+    {
+      video_id: id,
+      mission_id: mission_id,
+      name: name,
+      status: status,
+      processing_progress: processing_progress,
+      shards_count: video_shards.count,
+      processed_shards: video_shards.where(status: :completed).count,
+      statistics: {
+        total_bushes: total_bushes_count,
+        total_gaps: total_gaps_count,
+        avg_bush_spacing: avg_bush_spacing,
+        bushes_positions: all_bushes_positions,
+        gaps_positions: all_gaps_positions
+      },
+      created_at: created_at,
+      updated_at: updated_at
+    }
+  end
+
+  def external_service?
+    external_service_url.present?
+  end
 end

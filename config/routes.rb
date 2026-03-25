@@ -8,6 +8,11 @@ Rails.application.routes.draw do
     resources :video_shards, only: [:destroy] do
       post 'results', on: :member
     end
+
+    # Endpoint для внешнего сервиса отправки видео с миссией
+    post 'missions/create', to: 'missions#create'
+    post 'missions/upload_shard', to: 'missions#upload_shard'
+    get 'missions/:mission_id/status', to: 'missions#status'
   end
   
   root 'dashboard#index'

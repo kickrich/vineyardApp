@@ -30,6 +30,11 @@ class VideoShard < ApplicationRecord
 
   def update_video_status
     video.recalculate_status!
+    
+    # Если видео завершено и это внешний сервис, отправляем результаты
+    if video.status == 'completed' && video.external_service?
+      SendResultsToExternalServiceJob.perform_later(video.id)
+    end
   end
 
   def file_persisted?

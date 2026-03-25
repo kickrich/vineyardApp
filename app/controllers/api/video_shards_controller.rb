@@ -3,16 +3,19 @@ class Api::VideoShardsController < ApplicationController
 
   def results
     shard = VideoShard.find(params[:id])
-    
-    shard.update!(
+
+    shard.update_columns(
       bushes_count: params[:bushes_count],
       gaps_count: params[:gaps_count],
       bush_spacing_avg: params[:bush_spacing_avg],
       result_json: params[:result_json],
       recorded_at: Time.current,
-      status: :completed
+      status: VideoShard.statuses[:completed],
+      updated_at: Time.current
     )
-    
+
+    shard.video.recalculate_status!
+
     render json: { success: true, message: "Результаты сохранены" }
   end
 

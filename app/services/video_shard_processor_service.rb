@@ -11,7 +11,7 @@ class VideoShardProcessorService
     send_to_cv_service
     { success: true, message: "Отправлено на обработку" }
   rescue => e
-    @shard.update!(status: :error)
+    @shard.update_column(:status, VideoShard.statuses[:error]) rescue nil
     { success: false, error: e.message }
   end
 
@@ -46,7 +46,8 @@ class VideoShardProcessorService
       faraday.options.timeout = 600
     end
 
-    callback_url = "http://host.docker.internal:3000/api/video_shards/#{@shard.id}/results"
+    callback_host = ENV.fetch('RAILS_URL', 'http://localhost:3000')
+    callback_url = "#{callback_host}/api/video_shards/#{@shard.id}/results"
 
     payload = {
       shard_id: @shard.id.to_s,

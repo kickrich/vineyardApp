@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_20_195158) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_25_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -74,10 +74,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_20_195158) do
 
   create_table "videos", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "external_callback_token", comment: "Токен для безопасности колбэка"
+    t.string "external_service_url", comment: "URL сервиса для отправки результатов"
+    t.string "mission_id", comment: "ID миссии от внешнего сервиса"
     t.string "name"
     t.datetime "recorded_at"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.index ["mission_id"], name: "index_videos_on_mission_id", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
