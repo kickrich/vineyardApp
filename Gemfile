@@ -67,4 +67,4 @@ gem "tailwindcss-rails", "~> 4.4"
 gem 'faraday-multipart'
 gem 'activejob-status'
 
-gem "pagy", "~> 43.4"
+gem "pagy", "~> 43.5"
